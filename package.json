@@ -1,0 +1,22 @@
+{
+  "name": "liverpool-automation",
+  "version": "1.0.0",
+  "description": "E2E test automation for Liverpool.com.mx — Take Home Challenge",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "HEADED=true playwright test",
+    "test:headless": "playwright test",
+    "test:debug": "HEADED=true playwright test --debug",
+    "report": "playwright show-report",
+    "install:browsers": "playwright install chromium"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.50.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "docx": "^9.7.1"
+  }
+}
