@@ -28,7 +28,7 @@ git commit -m "Quitando el anti-Bot"
 git push
 
 git add .
-git commit -m "Se agrega las Estartegias del Test"
+git commit -m "Nuevos Reportes"
 git push
 
 
