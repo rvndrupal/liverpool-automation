@@ -20,17 +20,13 @@ class SearchPage {
   }
 
   // ─────────────────────────────────────────────────────────────
-  // BÚSQUEDA
+  // BÚSQUEDA — navega directo a la URL de resultados
+  // Más robusto en CI donde el input puede no cargar
   // ─────────────────────────────────────────────────────────────
 
   async search(term) {
-    const input = this.page.locator(
-      'input[type="search"], input[name="s"], input[placeholder*="Busca"], input[placeholder*="busca"]'
-    ).first();
-    await input.waitFor({ timeout: 10_000 });
-    await input.click();
-    await input.fill(term);
-    await input.press('Enter');
+    const encoded = encodeURIComponent(term).replace(/%20/g, '+');
+    await this.page.goto(`/tienda?s=${encoded}`);
     await this._waitForResults();
   }
 
@@ -62,11 +58,11 @@ class SearchPage {
 
   async sortByPrice(direction) {
     const sortLabels = {
-      lowest:  ['Menor precio', 'Precio: menor a mayor', 'De menor a mayor', 'Más barato'],
-      highest: ['Mayor precio', 'Precio: mayor a menor', 'De mayor a menor', 'Más caro'],
+      lowest:  ['Menor precio', 'Precio: menor a mayor', 'De menor a mayor'],
+      highest: ['Mayor precio', 'Precio: mayor a menor', 'De mayor a menor'],
     };
 
-    // 1. Cualquier <select> en la página
+    // Intentar con <select> nativo
     const selects = this.page.locator('select');
     const selectCount = await selects.count();
 
@@ -91,7 +87,7 @@ class SearchPage {
       }
     }
 
-    // 2. Dropdown custom
+    // Dropdown custom
     const sortTrigger = this.page.locator('text=/Ordenar por/i').first();
     if (await sortTrigger.isVisible({ timeout: 3_000 }).catch(() => false)) {
       await sortTrigger.click();
@@ -107,7 +103,7 @@ class SearchPage {
       }
     }
 
-    // 3. Fallback URL
+    // Fallback URL
     console.warn(`⚠️  Ordenamiento no encontrado en UI — aplicando vía URL`);
     const url = new URL(this.page.url());
     url.searchParams.set('sortBy', direction === 'lowest' ? 'priceAsc' : 'priceDesc');
@@ -166,7 +162,6 @@ class SearchPage {
     for (let i = 0; i < limit; i++) {
       const card = cards.nth(i);
 
-      // Marca (ej: "PLAYSTATION")
       let brand = '';
       const brandSelectors = ['[class*="brand"]', '[class*="Brand"]', '[class*="marca"]'];
       for (const sel of brandSelectors) {
@@ -177,7 +172,6 @@ class SearchPage {
         }
       }
 
-      // Nombre del producto (ej: "Consola fija ps5 de 1 tb")
       let name = '';
       const nameSelectors = [
         '[class*="product-name"]', '[class*="ProductName"]',
@@ -188,7 +182,6 @@ class SearchPage {
         const el = card.locator(sel).first();
         if (await el.isVisible({ timeout: 1_000 }).catch(() => false)) {
           const text = (await el.textContent().catch(() => '')).trim();
-          // Ignorar si es solo la marca
           if (text && text !== brand && text.length > brand.length) {
             name = text;
             break;
@@ -196,7 +189,6 @@ class SearchPage {
         }
       }
 
-      // Si no encontramos nombre separado, usar el link title
       if (!name) {
         const link = card.locator('a').first();
         if (await link.isVisible({ timeout: 1_000 }).catch(() => false)) {
@@ -207,7 +199,6 @@ class SearchPage {
 
       const fullName = brand && name ? `${brand} — ${name}` : name || brand || '(sin nombre)';
 
-      // Precio actual (no el tachado)
       const priceEl = card.locator(
         '[class*="price"]:not([class*="old"]):not([class*="before"]):not([class*="original"]):not([class*="regular"]),' +
         '[class*="Price"]:not([class*="old"]):not([class*="before"]):not([class*="original"]):not([class*="regular"])'
@@ -241,7 +232,6 @@ class SearchPage {
     console.log(`\n${line}\n`);
   }
 
-  // FIX CLAVE: cambiar networkidle por load
   async _waitForResults() {
     await this.page.waitForLoadState('load', { timeout: 30_000 });
     await this.page.waitForTimeout(1_500);

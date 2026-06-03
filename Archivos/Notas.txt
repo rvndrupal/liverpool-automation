@@ -23,6 +23,10 @@ git add .github/workflows/test.yml
 git commit -m "Se agrega GitHub Actions"
 git push
 
+git add .
+git commit -m "Cambios y libreria docx para los reportes"
+git push
+
 
 
 npx playwright test — Corre todos los tests
