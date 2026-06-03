@@ -23,8 +23,12 @@ git add .github/workflows/test.yml
 git commit -m "Se agrega GitHub Actions"
 git push
 
+git add pages/SearchPage.js tests/liverpool.spec.js tests/liverpool-api.spec.js
+git commit -m "Quitando el anti-Bot"
+git push
+
 git add .
-git commit -m "Modificando los test para pruebas de api con CI"
+git commit -m "Verificando Reportes y Cargas con respaldos"
 git push
 
 
