@@ -24,7 +24,7 @@ git commit -m "Se agrega GitHub Actions"
 git push
 
 git add .
-git commit -m "Cambios y libreria docx para los reportes"
+git commit -m "Modificando los test para pruebas de api con CI"
 git push
 
 
