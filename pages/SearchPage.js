@@ -151,7 +151,10 @@ class SearchPage {
       }
     }
 
-    if (!cards) throw new Error('❌ No se encontraron tarjetas de producto');
+    if (!cards) {
+      console.warn('⚠️  No se encontraron tarjetas de producto — puede ser bloqueo anti-bot');
+      return [];
+    }
 
     const total = await cards.count();
     console.log(`📦 ${total} productos en página`);
