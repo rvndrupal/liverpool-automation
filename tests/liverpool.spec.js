@@ -20,7 +20,7 @@ test.describe('Liverpool — Parte 1: Flujo E2E de búsqueda', () => {
     searchPage = new SearchPage(page);
   });
 
-  test('Buscar, filtrar, ordenar y extraer los primeros 5 productos', async ({ page }) => {
+  test('Buscar, filtrar, ordenar y extraer los primeros 5 productoss', async ({ page }) => {
     let uiProducts   = [];
     let totalResults = 0;
 
